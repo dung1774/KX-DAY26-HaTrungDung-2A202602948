@@ -1,0 +1,8 @@
+test_missing_gemini_key_has_clear_error (test_offline.FunctionCallingTests.test_missing_gemini_key_has_clear_error) ... ok
+test_mock_weather_remains_local_mock_data (test_offline.FunctionCallingTests.test_mock_weather_remains_local_mock_data) ... ok
+test_search_and_best_match_choose_highest_active_semver (test_offline.RegistryTests.test_search_and_best_match_choose_highest_active_semver) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.002s
+
+OK

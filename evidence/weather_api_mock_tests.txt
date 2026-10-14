@@ -1,0 +1,14 @@
+test_current_weather_formats_mocked_api_response (test_weather.WeatherToolTests.test_current_weather_formats_mocked_api_response) ... ok
+test_forecast_rejects_days_outside_demo_range (test_weather.WeatherToolTests.test_forecast_rejects_days_outside_demo_range) ... ok
+test_http_error_is_sanitized (test_weather.WeatherToolTests.test_http_error_is_sanitized) ... WARNING:weather:WeatherAPI returned HTTP 400
+ok
+test_malformed_api_response_does_not_crash_tool (test_weather.WeatherToolTests.test_malformed_api_response_does_not_crash_tool) ... WARNING:weather:WeatherAPI current response is missing required fields: 'name'
+ok
+test_missing_api_key_returns_tool_error (test_weather.WeatherToolTests.test_missing_api_key_returns_tool_error) ... ok
+test_timeout_is_handled (test_weather.WeatherToolTests.test_timeout_is_handled) ... WARNING:weather:WeatherAPI request timed out
+ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.097s
+
+OK

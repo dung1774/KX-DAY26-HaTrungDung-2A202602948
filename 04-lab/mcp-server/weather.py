@@ -1,8 +1,24 @@
 from typing import Any
-import asyncio
-import httpx
+
+import logging
 import os
+import sys
+from pathlib import Path
+
+import httpx
+from dotenv import load_dotenv
 from mcp.server.fastmcp import FastMCP
+
+load_dotenv(Path(__file__).with_name(".env"))
+
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8")
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+# httpx logs complete query URLs at INFO level. WeatherAPI authenticates with a
+# query parameter, so suppress those request lines to keep the key out of logs.
+logging.getLogger("httpx").setLevel(logging.WARNING)
 
 # Initialize FastMCP server
 port = int(os.getenv("PORT", 8085))
@@ -15,35 +31,57 @@ USER_AGENT = "weather-app/1.0"
 # Get API key from environment variable
 API_KEY = os.getenv("WEATHERAPI_KEY")
 
-async def make_weather_request(endpoint: str, params: dict[str, str]) -> dict[str, Any] | None:
+
+class WeatherAPIError(RuntimeError):
+    """Lỗi WeatherAPI đã được rút gọn an toàn để trả về tool caller."""
+
+
+async def make_weather_request(endpoint: str, params: dict[str, str]) -> dict[str, Any]:
     """Make a request to the WeatherAPI with proper error handling."""
-    # Check if API key is set
     if not API_KEY:
-        print("ERROR: WeatherAPI key not set. Please set WEATHERAPI_KEY environment variable.")
-        return None
-        
-    headers = {
-        "User-Agent": USER_AGENT,
-    }
-    # Add API key to parameters
-    params["key"] = API_KEY
-    
+        raise WeatherAPIError(
+            "WeatherAPI key is not configured. Set WEATHERAPI_KEY in the environment "
+            "or 04-lab/mcp-server/.env."
+        )
+
+    headers = {"User-Agent": USER_AGENT}
+    request_params = {**params, "key": API_KEY}
     url = f"{WEATHERAPI_BASE}/{endpoint}"
-    
+
     async with httpx.AsyncClient() as client:
         try:
-            response = await client.get(url, headers=headers, params=params, timeout=30.0)
+            response = await client.get(
+                url,
+                headers=headers,
+                params=request_params,
+                timeout=15.0,
+            )
             response.raise_for_status()
-            return response.json()
+            data = response.json()
+            if not isinstance(data, dict):
+                raise WeatherAPIError("WeatherAPI returned an invalid response.")
+            return data
+        except httpx.TimeoutException as exc:
+            logger.warning("WeatherAPI request timed out")
+            raise WeatherAPIError("WeatherAPI request timed out.") from exc
         except httpx.HTTPStatusError as e:
-            print(f"HTTP Error {e.response.status_code}: {e.response.text}")
-            return None
+            status = e.response.status_code
+            logger.warning("WeatherAPI returned HTTP %s", status)
+            if status in (401, 403):
+                message = "WeatherAPI rejected the API key."
+            elif status == 400:
+                message = "City was not found or the request was invalid."
+            elif status == 429:
+                message = "WeatherAPI quota has been exceeded."
+            else:
+                message = f"WeatherAPI returned HTTP {status}."
+            raise WeatherAPIError(message) from e
         except httpx.RequestError as e:
-            print(f"Request Error: {e}")
-            return None
-        except Exception as e:
-            print(f"Unexpected error: {e}")
-            return None
+            logger.warning("Unable to connect to WeatherAPI: %s", type(e).__name__)
+            raise WeatherAPIError("Unable to connect to WeatherAPI.") from e
+        except ValueError as exc:
+            logger.warning("WeatherAPI returned non-JSON data")
+            raise WeatherAPIError("WeatherAPI returned an invalid response.") from exc
 
 @mcp.tool()
 async def get_current_weather(city: str) -> str:
@@ -52,22 +90,20 @@ async def get_current_weather(city: str) -> str:
     Args:
         city: City name (e.g., "Hanoi", "Haiphong", "Danang", "Brisbane", "Sydney")
     """
+    city = city.strip()
+    if not city:
+        return "❌ City must not be empty."
+
     params = {
         "q": city,
         "aqi": "no"
     }
-    
-    data = await make_weather_request("current.json", params)
 
-    if not data:
-        if not API_KEY:
-            return f"❌ WeatherAPI key not configured. Please set WEATHERAPI_KEY environment variable with your API key from weatherapi.com"
-        return f"Unable to fetch current weather data for {city}. Please check the city name and API key configuration."
-
-    current = data["current"]
-    location = data["location"]
-    
-    return f"""
+    try:
+        data = await make_weather_request("current.json", params)
+        current = data["current"]
+        location = data["location"]
+        return f"""
 Current Weather for {location['name']}, {location['region']}, {location['country']}:
 
 Temperature: {current['temp_c']}°C ({current['temp_f']}°F)
@@ -81,6 +117,11 @@ Visibility: {current['vis_km']} km
 
 Last updated: {current['last_updated']}
 """
+    except WeatherAPIError as exc:
+        return f"❌ Unable to fetch current weather for {city}: {exc}"
+    except (KeyError, TypeError) as exc:
+        logger.warning("WeatherAPI current response is missing required fields: %s", exc)
+        return f"❌ Unable to fetch current weather for {city}: invalid API response."
 
 @mcp.tool()
 async def get_forecast(city: str, days: int = 3) -> str:
@@ -90,9 +131,12 @@ async def get_forecast(city: str, days: int = 3) -> str:
         city: City name (e.g., "Hanoi", "Haiphong", "Danang", "Brisbane", "Sydney", "Melbourne")
         days: Number of days to forecast (1-3 for free tier, max 10 for paid)
     """
-    # Limit days to 3 for free tier
-    days = min(days, 3)
-    
+    city = city.strip()
+    if not city:
+        return "❌ City must not be empty."
+    if not isinstance(days, int) or isinstance(days, bool) or not 1 <= days <= 3:
+        return "❌ Forecast days must be an integer from 1 to 3."
+
     params = {
         "q": city,
         "days": str(days),
@@ -100,24 +144,19 @@ async def get_forecast(city: str, days: int = 3) -> str:
         "alerts": "no"
     }
     
-    data = await make_weather_request("forecast.json", params)
+    try:
+        data = await make_weather_request("forecast.json", params)
+        location = data["location"]
+        forecast_days = data["forecast"]["forecastday"]
 
-    if not data:
-        if not API_KEY:
-            return f"❌ WeatherAPI key not configured. Please set WEATHERAPI_KEY environment variable with your API key from weatherapi.com"
-        return f"Unable to fetch forecast data for {city}. Please check the city name and API key configuration."
-
-    location = data["location"]
-    forecast_days = data["forecast"]["forecastday"]
-    
-    forecasts = []
-    forecasts.append(f"Weather Forecast for {location['name']}, {location['region']}, {location['country']}:")
-    
-    for day in forecast_days:
-        day_data = day["day"]
-        date = day["date"]
-        
-        forecast = f"""
+        forecasts = [
+            f"Weather Forecast for {location['name']}, "
+            f"{location['region']}, {location['country']}:"
+        ]
+        for day in forecast_days:
+            day_data = day["day"]
+            date = day["date"]
+            forecast = f"""
 {date}:
 High: {day_data['maxtemp_c']}°C ({day_data['maxtemp_f']}°F)
 Low: {day_data['mintemp_c']}°C ({day_data['mintemp_f']}°F)
@@ -126,27 +165,26 @@ Chance of Rain: {day_data['daily_chance_of_rain']}%
 Max Wind: {day_data['maxwind_kph']} km/h
 UV Index: {day_data['uv']}
 """
-        forecasts.append(forecast)
+            forecasts.append(forecast)
 
-    return "\n---\n".join(forecasts)
+        return "\n---\n".join(forecasts)
+    except WeatherAPIError as exc:
+        return f"❌ Unable to fetch forecast for {city}: {exc}"
+    except (KeyError, TypeError) as exc:
+        logger.warning("WeatherAPI forecast response is missing required fields: %s", exc)
+        return f"❌ Unable to fetch forecast for {city}: invalid API response."
 
 @mcp.tool()
 async def health_check() -> str:
     """Health check endpoint for deployment verification."""
     return "✅ Weather MCP Server is running! Ready to provide weather data for Australian cities and worldwide."
 
-print("✅ MCP server initialized with Streamable HTTP transport")
-print("🔧 Available tools: get_current_weather, get_forecast, health_check")
-
 if __name__ == "__main__":
-    import sys
-    
-    is_cloud_run = bool(os.getenv("PORT"))
-    is_standalone = len(sys.argv) == 1 and sys.stdin.isatty()
-    
-    if is_cloud_run or is_standalone:
-        print(f"🚀 Starting MCP server on http://0.0.0.0:{port}/mcp")
+    print("✅ Available tools: get_current_weather, get_forecast, health_check")
+    print(f"🚀 Starting MCP server on http://0.0.0.0:{port}/mcp")
+    # Lab 04 always uses Streamable HTTP. Do not infer transport from isatty():
+    # terminals launched by Cursor/CI are often non-interactive on Windows.
+    try:
         mcp.run(transport="streamable-http")
-    else:
-        print("Starting FastMCP server in stdio mode for local client", file=sys.stderr)
-        mcp.run()
+    except KeyboardInterrupt:
+        print("Weather MCP Server stopped.")

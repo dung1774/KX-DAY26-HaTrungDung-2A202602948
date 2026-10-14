@@ -26,7 +26,6 @@ from mcp.server.mcpserver import MCPServer
 # --- Token store (production: dùng DB, Redis, hoặc JWT verification) ---
 VALID_TOKENS: dict[str, str] = {
     os.environ.get("MCP_AUTH_TOKEN", "dev-token-abc123"): "dev-user",
-    "prod-key-xyz789": "prod-service",
 }
 
 
@@ -50,6 +49,8 @@ mcp = MCPServer(
     auth=AuthSettings(
         issuer_url="http://localhost:8000",
         resource_server_url="http://localhost:8000",
+        # Demo verifier uses a local static token and does not validate JWT audience.
+        validate_token_resource=False,
     ),
     token_verifier=StaticTokenVerifier(),
 )

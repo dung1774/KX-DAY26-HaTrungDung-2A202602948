@@ -21,6 +21,20 @@ export GEMINI_API_KEY=...
 python weather_function_calling.py
 ```
 
+Windows PowerShell:
+
+```powershell
+$env:GEMINI_API_KEY="..."
+python weather_function_calling.py
+```
+
+Script cũng tự nạp `01-function-calling/.env`. Model mặc định là
+`gemini-3.5-flash` vì Gemini API hiện trả 404 cho `gemini-2.5-flash`
+với tài khoản mới; có thể override bằng biến `GEMINI_MODEL`.
+
+> Dữ liệu do `get_weather()` trả về trong phần 01 là **mock**. Dữ liệu
+> thời tiết thật chỉ được gọi qua WeatherAPI ở Lab 04.
+
 ## File
 
 | File | Mô tả |

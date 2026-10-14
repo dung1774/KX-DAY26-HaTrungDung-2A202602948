@@ -1,0 +1,100 @@
+D:\AI_Thuc_Chien\14_10_2026\KX-DAY26-HaTrungDung-2A202602948\04-lab\mcp-client\.venv\Lib\site-packages\google\adk\features\_feature_decorator.py:72: UserWarning: [EXPERIMENTAL] feature FeatureName.PLUGGABLE_AUTH is enabled.
+  check_feature_enabled()
+INFO:weather_agent.agent:Initializing weather agent
+INFO:weather_agent.agent:MCP Server: http://localhost:8085/mcp
+INFO:weather_agent.agent:Weather agent configured with MCP tools (connection is verified at runtime).
+
+=== TEST A ===
+PROMPT: Cho tôi biết thời tiết hiện tại ở Hà Nội.
+WARNING:google_adk.google.adk.tools.mcp_tool.mcp_session_manager:Failed to configure mTLS using AsyncAuthorizedSession: Your default credentials were not found. To set up Application Default Credentials, see https://cloud.google.com/docs/authentication/external/set-up-adc for more information.
+D:\AI_Thuc_Chien\14_10_2026\KX-DAY26-HaTrungDung-2A202602948\04-lab\mcp-client\.venv\Lib\site-packages\google\adk\tools\mcp_tool\mcp_toolset.py:304: UserWarning: [EXPERIMENTAL] feature FeatureName._MCP_GRACEFUL_ERROR_HANDLING is enabled.
+  session = await self._mcp_session_manager.create_session(
+INFO:httpx:HTTP Request: POST http://localhost:8085/mcp "HTTP/1.1 200 OK"
+INFO:mcp.client.streamable_http:Received session ID: ba8a065546364f189e4258ff9066c6eb
+INFO:mcp.client.streamable_http:Negotiated protocol version: 2025-11-25
+INFO:httpx:HTTP Request: GET http://localhost:8085/mcp "HTTP/1.1 200 OK"
+INFO:httpx:HTTP Request: POST http://localhost:8085/mcp "HTTP/1.1 202 Accepted"
+INFO:httpx:HTTP Request: POST http://localhost:8085/mcp "HTTP/1.1 200 OK"
+D:\AI_Thuc_Chien\14_10_2026\KX-DAY26-HaTrungDung-2A202602948\04-lab\mcp-client\.venv\Lib\site-packages\google\adk\features\_feature_decorator.py:72: UserWarning: [EXPERIMENTAL] feature FeatureName.BASE_AUTHENTICATED_TOOL is enabled.
+  check_feature_enabled()
+D:\AI_Thuc_Chien\14_10_2026\KX-DAY26-HaTrungDung-2A202602948\04-lab\mcp-client\.venv\Lib\site-packages\google\adk\models\llm_request.py:256: UserWarning: [EXPERIMENTAL] feature FeatureName.JSON_SCHEMA_FOR_FUNC_DECL is enabled.
+  declaration = tool._get_declaration()
+INFO:google_adk.google.adk.models.google_llm:Sending out request, model: gemini-3.5-flash, backend: GoogleLLMVariant.GEMINI_API, stream: False
+INFO:httpx:HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent "HTTP/1.1 200 OK"
+INFO:google_adk.google.adk.models.google_llm:Response received from the model.
+TOOL_CALL: get_current_weather args={'city': 'Hanoi'}
+INFO:httpx:HTTP Request: POST http://localhost:8085/mcp "HTTP/1.1 200 OK"
+TOOL_RESPONSE: get_current_weather response={'content': [{'type': 'text', 'text': '\nCurrent Weather for Hanoi, , Vietnam:\n\nTemperature: 31.6°C (88.9°F)\nFeels like: 34.5°C (94.1°F)\nCondition: Cloudy\nHumidity: 54%\nWind: 15.5 km/h (9.6 mph) SE\nPressure: 1011.0 mb\nUV Index: 0.2\nVisibility: 10.0 km\n\nLast updated: 2026-10-14 17:15\n'}], 'structuredContent': {'result': '\nCurrent Weather for Hanoi, , Vietnam:\n\nTemperature: 31.6°C (88.9°F)\nFeels like: 34.5°C (94.1°F)\nCondition: Cloudy\nHumidity: 54%\nWind: 15.5 km/h (9.6 mph) SE\nPressure: 1011.0 mb\nUV Index: 0.2\nVisibility: 10.0 km\n\nLast updated: 2026-10-14 17:15\n'}, 'isError': False}
+INFO:google_adk.google.adk.models.google_llm:Sending out request, model: gemini-3.5-flash, backend: GoogleLLMVariant.GEMINI_API, stream: False
+INFO:httpx:HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent "HTTP/1.1 200 OK"
+INFO:google_adk.google.adk.models.google_llm:Response received from the model.
+FINAL_RESPONSE: Thời tiết hiện tại tại Hà Nội:
+
+- **Tình trạng:** Nhiều mây (Cloudy)
+- **Nhiệt độ:** 31.6°C (Cảm giác thực tế: 34.5°C)
+- **Độ ẩm:** 54%
+- **Gió:** 15.5 km/h (Hướng Đông Nam)
+- **Tầm nhìn:** 10.0 km
+- **Chỉ số UV:** 0.2
+- **Thời gian cập nhật:** 17:15, ngày 14/10/2026
+RESULT: PASS (get_current_weather was called and returned a response)
+
+=== TEST B ===
+PROMPT: Dự báo thời tiết Hà Nội trong 3 ngày tới.
+INFO:httpx:HTTP Request: POST http://localhost:8085/mcp "HTTP/1.1 200 OK"
+INFO:google_adk.google.adk.models.google_llm:Sending out request, model: gemini-3.5-flash, backend: GoogleLLMVariant.GEMINI_API, stream: False
+INFO:httpx:HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent "HTTP/1.1 200 OK"
+INFO:google_adk.google.adk.models.google_llm:Response received from the model.
+TOOL_CALL: get_forecast args={'days': 3, 'city': 'Hanoi'}
+INFO:httpx:HTTP Request: POST http://localhost:8085/mcp "HTTP/1.1 200 OK"
+TOOL_RESPONSE: get_forecast response={'content': [{'type': 'text', 'text': 'Weather Forecast for Hanoi, , Vietnam:\n---\n\n2026-10-14:\nHigh: 34.3°C (93.8°F)\nLow: 24.9°C (76.8°F)\nCondition: Smoky haze\nChance of Rain: 5%\nMax Wind: 18.4 km/h\nUV Index: 7.6\n\n---\n\n2026-10-15:\nHigh: 33.6°C (92.5°F)\nLow: 24.8°C (76.6°F)\nCondition: Smoky haze\nChance of Rain: 10%\nMax Wind: 19.4 km/h\nUV Index: 7.4\n\n---\n\n2026-10-16:\nHigh: 33.4°C (92.1°F)\nLow: 24.2°C (75.6°F)\nCondition: Smoky haze\nChance of Rain: 17%\nMax Wind: 19.4 km/h\nUV Index: 8.3\n'}], 'structuredContent': {'result': 'Weather Forecast for Hanoi, , Vietnam:\n---\n\n2026-10-14:\nHigh: 34.3°C (93.8°F)\nLow: 24.9°C (76.8°F)\nCondition: Smoky haze\nChance of Rain: 5%\nMax Wind: 18.4 km/h\nUV Index: 7.6\n\n---\n\n2026-10-15:\nHigh: 33.6°C (92.5°F)\nLow: 24.8°C (76.6°F)\nCondition: Smoky haze\nChance of Rain: 10%\nMax Wind: 19.4 km/h\nUV Index: 7.4\n\n---\n\n2026-10-16:\nHigh: 33.4°C (92.1°F)\nLow: 24.2°C (75.6°F)\nCondition: Smoky haze\nChance of Rain: 17%\nMax Wind: 19.4 km/h\nUV Index: 8.3\n'}, 'isError': False}
+INFO:google_adk.google.adk.models.google_llm:Sending out request, model: gemini-3.5-flash, backend: GoogleLLMVariant.GEMINI_API, stream: False
+INFO:httpx:HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent "HTTP/1.1 200 OK"
+INFO:google_adk.google.adk.models.google_llm:Response received from the model.
+FINAL_RESPONSE: Dự báo thời tiết Hà Nội trong 3 ngày tới:
+
+- **Ngày 14/10/2026:**
+  - **Nhiệt độ:** 24.9°C – 34.3°C
+  - **Trạng thái:** Mù khói / sương mù nhẹ
+  - **Khả năng mưa:** 5%
+  - **Gió tối đa:** 18.4 km/h
+  - **Chỉ số UV:** 7.6 (Cao)
+
+- **Ngày 15/10/2026:**
+  - **Nhiệt độ:** 24.8°C – 33.6°C
+  - **Trạng thái:** Mù khói / sương mù nhẹ
+  - **Khả năng mưa:** 10%
+  - **Gió tối đa:** 19.4 km/h
+  - **Chỉ số UV:** 7.4 (Cao)
+
+- **Ngày 16/10/2026:**
+  - **Nhiệt độ:** 24.2°C – 33.4°C
+  - **Trạng thái:** Mù khói / sương mù nhẹ
+  - **Khả năng mưa:** 17%
+  - **Gió tối đa:** 19.4 km/h
+  - **Chỉ số UV:** 8.3 (Rất cao)
+RESULT: PASS (get_forecast was called and returned a response)
+
+=== TEST C ===
+PROMPT: Hãy gọi health_check để kiểm tra MCP Server.
+INFO:httpx:HTTP Request: POST http://localhost:8085/mcp "HTTP/1.1 200 OK"
+INFO:google_adk.google.adk.models.google_llm:Sending out request, model: gemini-3.5-flash, backend: GoogleLLMVariant.GEMINI_API, stream: False
+INFO:httpx:HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent "HTTP/1.1 200 OK"
+INFO:google_adk.google.adk.models.google_llm:Response received from the model.
+TOOL_CALL: health_check args={}
+INFO:httpx:HTTP Request: POST http://localhost:8085/mcp "HTTP/1.1 200 OK"
+TOOL_RESPONSE: health_check response={'content': [{'type': 'text', 'text': '✅ Weather MCP Server is running! Ready to provide weather data for Australian cities and worldwide.'}], 'structuredContent': {'result': '✅ Weather MCP Server is running! Ready to provide weather data for Australian cities and worldwide.'}, 'isError': False}
+INFO:google_adk.google.adk.models.google_llm:Sending out request, model: gemini-3.5-flash, backend: GoogleLLMVariant.GEMINI_API, stream: False
+INFO:httpx:HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent "HTTP/1.1 200 OK"
+INFO:google_adk.google.adk.models.google_llm:Response received from the model.
+FINAL_RESPONSE: MCP Server đang hoạt động bình thường! ✅
+
+Chi tiết: **Weather MCP Server is running! Ready to provide weather data for Australian cities and worldwide.**
+RESULT: PASS (health_check was called and returned a response)
+INFO:google_adk.google.adk.runners:Closing runner...
+INFO:google_adk.google.adk.runners:Closing toolset: McpToolset
+INFO:httpx:HTTP Request: DELETE http://localhost:8085/mcp "HTTP/1.1 200 OK"
+INFO:google_adk.google.adk.runners:Successfully closed toolset: McpToolset
+INFO:google_adk.google.adk.runners:Runner closed.
+
+E2E RESULT: PASS (3/3 selected cases)

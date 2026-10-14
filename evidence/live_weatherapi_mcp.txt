@@ -1,0 +1,56 @@
+TOOLS: get_current_weather, get_forecast, health_check
+
+=== get_current_weather ===
+
+Current Weather for Hanoi, , Vietnam:
+
+Temperature: 31.6°C (88.9°F)
+Feels like: 34.5°C (94.1°F)
+Condition: Cloudy
+Humidity: 54%
+Wind: 15.5 km/h (9.6 mph) SE
+Pressure: 1011.0 mb
+UV Index: 0.2
+Visibility: 10.0 km
+
+Last updated: 2026-10-14 17:15
+
+isError=False
+
+=== get_forecast ===
+Weather Forecast for Hanoi, , Vietnam:
+---
+
+2026-10-14:
+High: 34.3°C (93.8°F)
+Low: 24.9°C (76.8°F)
+Condition: Smoky haze
+Chance of Rain: 5%
+Max Wind: 18.4 km/h
+UV Index: 7.6
+
+---
+
+2026-10-15:
+High: 33.6°C (92.5°F)
+Low: 24.8°C (76.6°F)
+Condition: Smoky haze
+Chance of Rain: 10%
+Max Wind: 19.4 km/h
+UV Index: 7.4
+
+---
+
+2026-10-16:
+High: 33.4°C (92.1°F)
+Low: 24.2°C (75.6°F)
+Condition: Smoky haze
+Chance of Rain: 17%
+Max Wind: 19.4 km/h
+UV Index: 8.3
+
+isError=False
+
+=== health_check ===
+✅ Weather MCP Server is running! Ready to provide weather data for Australian cities and worldwide.
+isError=False

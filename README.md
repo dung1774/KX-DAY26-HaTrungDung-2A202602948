@@ -58,6 +58,20 @@ python auth_client.py              # terminal 2
 cd 03-production && python registry_client.py
 ```
 
+Trên Windows PowerShell (Python 3.12):
+
+```powershell
+py -3.12 -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install -r requirements.txt
+
+Set-Location 02-mcp-basics
+python weather_client.py
+```
+
+Phần `04-lab` có hai `.venv` riêng do `uv sync` tạo; không dùng môi
+trường MCP SDK v2 của phần 01–03 cho Lab 04.
+
 ---
 
 ## Định nghĩa ngắn gọn

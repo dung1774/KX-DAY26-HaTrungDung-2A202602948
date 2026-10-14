@@ -1,0 +1,23 @@
+User: Thời tiết Hà Nội và Đà Nẵng hôm nay thế nào?
+
+  [model yêu cầu] get_weather({'city': 'Hà Nội'})
+  [app thực thi]  -> {"city": "Hà Nội", "nhiệt_độ": "29°C", "thời_tiết": "trời mưa nhẹ", "độ_ẩm": "82%", "gió": {"hướng": "Đông Nam", "tốc_độ": "12 km/h"}}
+  [model yêu cầu] get_weather({'city': 'Đà Nẵng'})
+  [app thực thi]  -> {"city": "Đà Nẵng", "nhiệt_độ": "30°C", "thời_tiết": "nhiều mây", "độ_ẩm": "78%", "gió": {"hướng": "Đông", "tốc_độ": "10 km/h"}}
+Trả lời: Dưới đây là thông tin thời tiết hôm nay tại Hà Nội và Đà Nẵng nhé:
+
+🌧️ **Hà Nội:**
+* **Nhiệt độ:** 29°C
+* **Trạng thái:** Trời mưa nhẹ 🌧️
+* **Độ ẩm:** 82% 💧
+* **Gió:** Đông Nam, 12 km/h 💨
+👉 **Lời khuyên:** Đừng quên mang theo ô (dù) hoặc áo mưa khi ra ngoài nhé! Thời tiết khá ẩm ướt nên bạn cũng nên chú ý cẩn thận khi di chuyển.
+
+🌤️ **Đà Nẵng:**
+* **Nhiệt độ:** 30°C
+* **Trạng thái:** Nhiều mây ☁️
+* **Độ ẩm:** 78% 💧
+* **Gió:** Đông, 10 km/h 💨
+👉 **Lời khuyên:** Thời tiết nhiều mây khá dễ chịu, không quá oi nóng. Bạn chỉ cần ăn mặc thoải mái và mang theo nước uống khi đi ra ngoài thôi nhé!
+
+Chúc bạn có một ngày vui vẻ! 😊

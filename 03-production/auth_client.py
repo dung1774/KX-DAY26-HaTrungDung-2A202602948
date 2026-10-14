@@ -13,8 +13,8 @@ Cách chạy (cần auth_server.py đang chạy ở terminal khác):
 from __future__ import annotations
 
 import asyncio
-
 import os
+import sys
 
 from mcp import ClientSession
 from mcp.client.streamable_http import create_mcp_http_client, streamable_http_client
@@ -24,6 +24,9 @@ TOKEN = os.environ.get("MCP_AUTH_TOKEN", "dev-token-abc123")
 
 
 async def main() -> None:
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8")
+
     http_client = create_mcp_http_client(
         headers={"Authorization": f"Bearer {TOKEN}"},
     )

@@ -63,6 +63,15 @@ export WEATHERAPI_KEY="your_weatherapi_key"
 uv run python weather.py
 ```
 
+Windows PowerShell:
+
+```powershell
+Set-Location 04-lab\mcp-server
+uv sync --python 3.12
+$env:WEATHERAPI_KEY="..."  # bỏ qua nếu đã có trong .env
+uv run python weather.py
+```
+
 The server will be available at `http://localhost:8085/mcp`.
 
 ### 2. ADK Agent (Client)
@@ -78,6 +87,22 @@ echo "GOOGLE_API_KEY=your_gemini_api_key" > .env
 uv run adk web
 ```
 
+Trong terminal PowerShell thứ hai:
+
+```powershell
+Set-Location 04-lab\mcp-client
+uv sync --python 3.12
+uv run python verify_setup.py
+uv run adk web
+```
+
+Kiểm thử E2E không cần trình duyệt (server phải đang chạy):
+
+```powershell
+uv run python e2e_test.py
+# Hoặc chỉ chạy một số ca: uv run python e2e_test.py A C
+```
+
 Open http://localhost:8000 in your browser, select `weather_agent`, and ask about the weather.
 
 ## Configuration
@@ -86,5 +111,6 @@ Open http://localhost:8000 in your browser, select `weather_agent`, and ask abou
 |----------|-------|-------------|
 | `WEATHERAPI_KEY` | mcp-server | API key from weatherapi.com |
 | `GOOGLE_API_KEY` | mcp-client/.env | Gemini API key |
+| `GEMINI_MODEL` | mcp-client/.env (optional) | Model override; default `gemini-3.5-flash` |
 | `PORT` | mcp-server (env) | Override server port (default: 8085) |
 | `MCP_SERVER_URL` | mcp-client/.env | MCP endpoint the agent connects to (default: `http://localhost:8085/mcp`; set to your Cloud Run URL + `/mcp` when deployed) |

@@ -103,7 +103,7 @@ connection_params = StreamableHTTPConnectionParams(
 
 root_agent = Agent(
     name="weather_agent",
-    model="gemini-2.5-flash",
+        model=os.getenv("GEMINI_MODEL", "gemini-3.5-flash"),
     tools=[weather_tools],
 )
 ```
@@ -123,16 +123,30 @@ root_agent = Agent(
 3. **Timeout errors**: Server not started
    - Start the MCP server first, then the ADK client
 
-### Fallback Mode
+### Connection failures
 
-If MCP connection fails, the agent runs in fallback mode without tools.
-Fix the connection and restart ADK web.
+The agent does not silently fall back to a tool-less Agent. Run
+`uv run python verify_setup.py` to perform a real MCP initialize, list all three
+tools, and call `health_check`; then fix the reported endpoint error before
+starting ADK Web.
 
 ## Environment Variables
 
 Create `.env` file:
 ```bash
 GOOGLE_API_KEY=your_gemini_api_key
+MCP_SERVER_URL=http://localhost:8085/mcp
+# Optional: GEMINI_MODEL=gemini-3.5-flash
+```
+
+## Windows PowerShell verification
+
+```powershell
+Set-Location 04-lab\mcp-client
+uv sync --python 3.12
+uv run python verify_setup.py
+uv run python e2e_test.py
+uv run adk web
 ```
 
 ## Resources

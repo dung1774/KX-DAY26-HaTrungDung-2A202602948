@@ -1,0 +1,39 @@
+INFO:weather_agent.agent:Initializing weather agent
+INFO:weather_agent.agent:MCP Server: http://localhost:8085/mcp
+INFO:weather_agent.agent:Weather agent configured with MCP tools (connection is verified at runtime).
+============================================================
+Weather Agent Setup Verification
+============================================================
+
+🔍 Checking environment configuration...
+✅ GOOGLE_API_KEY configured (value hidden)
+✅ WEATHERAPI_KEY configured (value hidden)
+
+🔍 Checking dependencies...
+✅ Google ADK
+✅ Google Gen AI SDK
+✅ MCP
+✅ FastMCP
+✅ python-dotenv
+✅ httpx
+
+🔍 Checking agent structure...
+✅ weather_agent\agent.py
+✅ weather_agent\__init__.py
+
+🔍 Checking MCP server connectivity...
+✅ MCP initialize succeeded at http://localhost:8085/mcp
+✅ MCP list_tools discovered: get_current_weather, get_forecast, health_check
+✅ MCP call_tool('health_check') succeeded
+
+🔍 Checking agent import...
+✅ Agent imported successfully: weather_agent
+   Model: gemini-3.5-flash; toolsets: 1
+
+============================================================
+✅ All checks passed!
+
+🚀 Ready to start!
+   Run: uv run adk web
+
+📍 Then open: http://localhost:8000
